@@ -715,7 +715,8 @@
       "name": "[concat(variables('resourceDeployment'), '-rbac')]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', variables('resourceDeployment'))]"
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]",
+        "[variables('resourceDeployment')]"
       ],
       "properties": {
         "mode": "Incremental",
