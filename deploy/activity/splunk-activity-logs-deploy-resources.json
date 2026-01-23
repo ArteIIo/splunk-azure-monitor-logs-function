@@ -716,7 +716,7 @@
       "resourceGroup": "[variables('resourceGroupName')]",
       "dependsOn": [
         "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]",
-        "[variables('resourceDeployment')]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', variables('resourceDeployment'))]"
       ],
       "properties": {
         "mode": "Incremental",
