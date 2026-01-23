@@ -730,6 +730,12 @@
           "functionPrincipalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', variables('resourceDeployment'))).outputs.functionPrincipalId.value]"
           },
+          "subscriptionId": {
+            "value": "[subscription().subscriptionId]"
+          },
+          "resourceGroupName": {
+            "value": "[variables('resourceGroupName')]"
+          },
           "jobsStorageAccountName": {
             "value": "[if(equals(parameters('altJobsStorageName'), ''), concat('splkjobstr', uniqueString(parameters('scdmInputId'))), parameters('altJobsStorageName'))]"
           },
@@ -745,6 +751,8 @@
           "contentVersion": "1.0.0.0",
           "parameters": {
             "functionPrincipalId": { "type": "string" },
+            "subscriptionId": { "type": "string" },
+            "resourceGroupName": { "type": "string" },
             "jobsStorageAccountName": { "type": "string" },
             "backupStorageAccountName": { "type": "string" },
             "eventHubNamespaceName": { "type": "string" }
@@ -753,10 +761,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('jobsStorageAccountName'), 'Storage Blob Data Owner')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('jobsStorageAccountName'), 'Storage Blob Data Owner')]",
               "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('jobsStorageAccountName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/b7e6dc6d-f1e8-4753-8033-0f276bb0955b', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
@@ -764,10 +772,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('jobsStorageAccountName'), 'Storage Account Contributor')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('jobsStorageAccountName'), 'Storage Account Contributor')]",
               "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('jobsStorageAccountName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '17d1049b-9a84-46fb-8f53-869881c3d3ab')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
@@ -775,10 +783,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('jobsStorageAccountName'), 'Storage Queue Data Contributor')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('jobsStorageAccountName'), 'Storage Queue Data Contributor')]",
               "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('jobsStorageAccountName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '974c5e8b-45b9-4653-ba55-5f855dd0fb88')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
@@ -786,10 +794,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('jobsStorageAccountName'), 'Storage Table Data Contributor')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('jobsStorageAccountName'), 'Storage Table Data Contributor')]",
               "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('jobsStorageAccountName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
@@ -797,10 +805,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('backupStorageAccountName'), 'Storage Blob Data Contributor')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('backupStorageAccountName'), 'Storage Blob Data Contributor')]",
               "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('backupStorageAccountName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
@@ -808,10 +816,10 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[guid(resourceGroup().id, parameters('eventHubNamespaceName'), 'Azure Event Hubs Data Receiver')]",
+              "name": "[guid(parameters('resourceGroupName'), parameters('eventHubNamespaceName'), 'Azure Event Hubs Data Receiver')]",
               "scope": "[format('Microsoft.EventHub/namespaces/{0}', parameters('eventHubNamespaceName'))]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a638d3c7-ab3a-418d-83e6-5f17a39d4fde')]",
+                "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/a638d3c7-ab3a-418d-83e6-5f17a39d4fde', parameters('subscriptionId'))]",
                 "principalId": "[parameters('functionPrincipalId')]",
                 "principalType": "ServicePrincipal"
               }
