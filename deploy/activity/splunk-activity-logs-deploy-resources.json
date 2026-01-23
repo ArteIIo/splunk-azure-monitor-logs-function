@@ -706,9 +706,10 @@
               }
             },
             {
-              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('jobsStorageAccountName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Blob Data Owner'))]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Blob Data Owner')]",
+              "scope": "[concat('Microsoft.Storage/storageAccounts/', variables('jobsStorageAccountName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]"
@@ -720,9 +721,10 @@
               }
             },
             {
-              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('jobsStorageAccountName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Account Contributor'))]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Account Contributor')]",
+              "scope": "[concat('Microsoft.Storage/storageAccounts/', variables('jobsStorageAccountName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]"
@@ -734,9 +736,10 @@
               }
             },
             {
-              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('jobsStorageAccountName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Queue Data Contributor'))]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Queue Data Contributor')]",
+              "scope": "[concat('Microsoft.Storage/storageAccounts/', variables('jobsStorageAccountName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]"
@@ -748,9 +751,10 @@
               }
             },
             {
-              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('jobsStorageAccountName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Table Data Contributor'))]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), variables('functionName'), 'Storage Table Data Contributor')]",
+              "scope": "[concat('Microsoft.Storage/storageAccounts/', variables('jobsStorageAccountName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]"
@@ -762,9 +766,10 @@
               }
             },
             {
-              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('backupStorageAccountName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName')), variables('functionName'), 'Storage Blob Data Contributor'))]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName')), variables('functionName'), 'Storage Blob Data Contributor')]",
+              "scope": "[concat('Microsoft.Storage/storageAccounts/', variables('backupStorageAccountName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName'))]"
@@ -776,9 +781,10 @@
               }
             },
             {
-              "type": "Microsoft.EventHub/namespaces/providers/roleAssignments",
+              "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "name": "[concat(variables('eventHubNamespaceName'), '/Microsoft.Authorization/', guid(resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName')), variables('functionName'), 'Azure Event Hubs Data Receiver'))]",
+              "name": "[guid(resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName')), variables('functionName'), 'Azure Event Hubs Data Receiver')]",
+              "scope": "[concat('Microsoft.EventHub/namespaces/', variables('eventHubNamespaceName'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
                 "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]"
