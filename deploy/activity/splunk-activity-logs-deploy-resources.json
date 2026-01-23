@@ -499,9 +499,7 @@
                   "type": "eventhubs",
                   "apiVersion": "2021-11-01",
                   "name": "[variables('eventHubName')]",
-                  "properties": {
-                    "partitionCount": 32
-                  },
+                  "properties": {},
                   "dependsOn": [
                     "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]"
                   ],
