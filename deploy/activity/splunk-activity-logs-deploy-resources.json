@@ -48,7 +48,7 @@
       "type": "object",
       "defaultValue": {}
     },
-    "enableEventhubMetadata":{
+    "enableEventhubMetadata": {
       "type": "string",
       "defaultValue": "false"
     }
@@ -56,7 +56,9 @@
   "variables": {
     "resourceGroupName": "[if(equals(parameters('existingResourceGroupName'), ''), concat('SplunkDMDataIngest-', parameters('scdmInputId')), parameters('existingResourceGroupName'))]",
     "resourceDeployment": "[concat('SplunkDMDataIngest-', parameters('scdmInputId'))]",
-    "scdmInputTag": { "SplunkDMInputId": "[parameters('scdmInputId')]" },
+    "scdmInputTag": {
+      "SplunkDMInputId": "[parameters('scdmInputId')]"
+    },
     "allResourceTags": "[union(variables('scdmInputTag'), parameters('resourceTags'))]"
   },
   "resources": [
@@ -66,7 +68,7 @@
       "location": "[parameters('region')]",
       "name": "[variables('resourceGroupName')]",
       "tags": "[union(variables('allResourceTags'), createObject('SplunkDMDeletionOrder', 10))]",
-      "condition":"[equals(parameters('existingResourceGroupName'), '')]",
+      "condition": "[equals(parameters('existingResourceGroupName'), '')]",
       "properties": {}
     },
     {
@@ -169,6 +171,7 @@
             }
           },
           "variables": {
+            "eventHubDataReceiverRoleGuid": "a638d3c7-ab3a-418d-83e6-5f17a39d4fde",
             "consumerGroupName": "splk-activity-logs-consumer-group",
             "eventHubAuthRuleListen": "splk-activity-logs-eventhub-auth-listen",
             "eventHubAuthRuleSend": "splk-activity-logs-eventhub-auth-send",
@@ -600,6 +603,9 @@
               "apiVersion": "2020-12-01",
               "location": "[parameters('region')]",
               "kind": "functionapp,linux",
+              "identity": {
+                "type": "SystemAssigned"
+              },
               "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventHubNamespaceName'), variables('eventHubName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName'))]",
@@ -634,11 +640,7 @@
                     },
                     {
                       "name": "AzureWebJobsStorage",
-                      "value": "[concat(
-                          'DefaultEndpointsProtocol=https;AccountName=',
-                          variables('jobsStorageAccountName'),
-                          ';AccountKey=',
-                          listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), '2021-04-01').keys[0].value)]"
+                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('jobsStorageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName')), '2021-04-01').keys[0].value)]"
                     },
                     {
                       "name": "ConsumerGroupName",
@@ -653,16 +655,12 @@
                       "value": "[variables('eventHubName')]"
                     },
                     {
-                      "name": "EventHubConnection",
-                      "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', variables('eventHubNamespaceName'), variables('eventHubAuthRuleListen')), '2021-11-01').primaryConnectionString]"
+                      "name": "EventHubConnection__fullyQualifiedNamespace",
+                      "value": "[concat(variables('eventHubNamespaceName'), '.servicebus.windows.net')]"
                     },
                     {
                       "name": "FailedEventsStorageConnection",
-                      "value": "[concat(
-                          'DefaultEndpointsProtocol=https;AccountName=',
-                          variables('backupStorageAccountName'),
-                          ';AccountKey=',
-                          listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName')), '2021-04-01').keys[0].value)]"
+                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('backupStorageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName')), '2021-04-01').keys[0].value)]"
                     },
                     {
                       "name": "HecUrl",
@@ -692,6 +690,21 @@
                 }
               },
               "resources": []
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid(resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName')), variables('functionName'), 'eh-recv')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]"
+              ],
+              "scope": "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('eventHubDataReceiverRoleGuid'))]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName'))).identity.principalId]",
+                "principalType": "ServicePrincipal"
+              }
             },
             {
               "type": "Microsoft.Web/sites/providers/diagnosticSettings",
