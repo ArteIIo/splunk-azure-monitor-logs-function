@@ -702,7 +702,7 @@
               "scope": "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]",
               "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('eventHubDataReceiverRoleGuid'))]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName'))).identity.principalId]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2020-12-01', 'Full').identity.principalId]",
                 "principalType": "ServicePrincipal"
               }
             },
