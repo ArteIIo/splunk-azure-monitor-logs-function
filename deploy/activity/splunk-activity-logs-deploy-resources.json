@@ -565,17 +565,16 @@
             {
               "type": "Microsoft.Web/serverfarms",
               "tags": "[union(parameters('allResourceTags'), createObject('SplunkDMDeletionOrder', 2))]",
-              "apiVersion": "2020-12-01",
+              "apiVersion": "2023-12-01",
               "name": "[variables('hostingPlanName')]",
               "location": "[parameters('region')]",
               "kind": "functionapp",
               "properties": {
-                "computeMode": "Dynamic",
                 "reserved": true
               },
               "sku": {
-                "name": "Y1",
-                "tier": "Dynamic"
+                "name": "FC1",
+                "tier": "FlexConsumption"
               }
             },
             {
@@ -601,7 +600,7 @@
               "name": "[variables('functionName')]",
               "type": "Microsoft.Web/sites",
               "tags": "[union(parameters('allResourceTags'), createObject('SplunkDMDeletionOrder', 1))]",
-              "apiVersion": "2020-12-01",
+              "apiVersion": "2023-12-01",
               "location": "[parameters('region')]",
               "kind": "functionapp,linux",
               "identity": {
@@ -617,6 +616,16 @@
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "functionAppConfig": {
+                  "runtime": {
+                    "name": "node",
+                    "version": "22"
+                  },
+                  "scaleAndConcurrency": {
+                    "maximumInstanceCount": 100,
+                    "instanceMemoryMB": 2048
+                  }
+                },
                 "siteConfig": {
                   "minTlsVersion": "1.2",
                   "ftpsState": "Disabled",
@@ -625,15 +634,10 @@
                       "*"
                     ]
                   },
-                  "linuxFxVersion": "node|18",
                   "appSettings": [
                     {
                       "name": "FUNCTIONS_EXTENSION_VERSION",
                       "value": "~4"
-                    },
-                    {
-                      "name": "FUNCTIONS_WORKER_RUNTIME",
-                      "value": "node"
                     },
                     {
                       "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -703,7 +707,7 @@
               "scope": "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]",
               "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('eventHubDataReceiverRoleGuid'))]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2020-12-01', 'Full').identity.principalId]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2023-12-01', 'Full').identity.principalId]",
                 "principalType": "ServicePrincipal"
               }
             },
@@ -718,7 +722,7 @@
               ],
               "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataOwnerRoleGuid'))]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2020-12-01', 'Full').identity.principalId]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2023-12-01', 'Full').identity.principalId]",
                 "principalType": "ServicePrincipal"
               }
             },
@@ -733,7 +737,7 @@
               ],
               "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataOwnerRoleGuid'))]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2020-12-01', 'Full').identity.principalId]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2023-12-01', 'Full').identity.principalId]",
                 "principalType": "ServicePrincipal"
               }
             },
