@@ -406,6 +406,17 @@
               }
             },
             {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-04-01",
+              "name": "[concat(variables('jobsStorageAccountName'), '/default/deploymentpackage')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]"
+              ],
+              "properties": {
+                "publicAccess": "None"
+              }
+            },
+            {
               "type": "Microsoft.Storage/storageAccounts/managementPolicies",
               "apiVersion": "2021-04-01",
               "name": "[concat(variables('jobsStorageAccountName'), '/default')]",
@@ -610,6 +621,7 @@
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventHubNamespaceName'), variables('eventHubName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('backupStorageAccountName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('jobsStorageAccountName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('jobsStorageAccountName'), 'default', 'deploymentpackage')]",
                 "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
               ],
               "properties": {
@@ -619,8 +631,11 @@
                 "functionAppConfig": {
                   "deployment": {
                     "storage": {
-                      "type": "package",
-                      "value": "[parameters('functionPackageURL')]"
+                      "type": "blobContainer",
+                      "value": "[concat('https://', variables('jobsStorageAccountName'), '.blob.core.windows.net/deploymentpackage')]",
+                      "authentication": {
+                        "type": "SystemAssignedIdentity"
+                      }
                     }
                   },
                   "runtime": {
